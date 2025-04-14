@@ -1,0 +1,11 @@
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+
+# virtual environment
+venv/
+.env
+
+# OS files
+.DS_Store
