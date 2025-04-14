@@ -1,6 +1,6 @@
 # 🧠 Step 3: Add Starter Code to main.py
 # This file will be the entry point for your FastAPI application.
-# It will include the necessary imports and set up the FastAPI app.
+# It will include the necessary imports and set up the FastAPI app
 from fastapi import FastAPI
 from routes.chat import chat_router
 
