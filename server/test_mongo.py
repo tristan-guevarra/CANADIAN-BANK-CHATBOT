@@ -13,3 +13,5 @@ try:
     print("Collections:", db.list_collection_names())
 except Exception as e:
     print("❌ Connection failed:", e)
+
+# testing git commit
