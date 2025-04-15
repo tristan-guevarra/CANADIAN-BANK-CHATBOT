@@ -121,7 +121,8 @@ export default function Home() { // Main component
                       {new Date(msg.timestamp).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit',
-                      })}
+                        timeZone: 'UTC',
+                      })} (UTC)
                     </div>
                   )}
                 </div>
