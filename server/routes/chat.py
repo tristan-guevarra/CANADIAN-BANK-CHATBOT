@@ -3,17 +3,18 @@ from pydantic import BaseModel
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
+from datetime import datetime
+from db import messages_collection  # <-- Import from db.py
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
 # Initialize OpenAI client with API key
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# Create a router instance
+# Initialize FastAPI router
 chat_router = APIRouter()
 
-# Define the expected request body schema
+# Define the request model for the chat endpoint
 class ChatRequest(BaseModel):
     message: str
 
@@ -21,19 +22,30 @@ class ChatRequest(BaseModel):
 @chat_router.post("/chat")
 async def chat_endpoint(request: ChatRequest):
     try:
-        # Make a request to the OpenAI API with the user's message
+        # Store user message in DB
+        user_msg = {
+            "sender": "user",
+            "content": request.message,
+            "timestamp": datetime.utcnow()
+        }
+        messages_collection.insert_one(user_msg)
+
+        # Get OpenAI response
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[
-                {"role": "user", "content": request.message}
-            ]
+            messages=[{"role": "user", "content": request.message}]
         )
+        bot_reply = response.choices[0].message.content
 
-        # Log the full response for debugging
-        print("OpenAI response:", response)
+        # Store bot message in DB
+        bot_msg = {
+            "sender": "bot",
+            "content": bot_reply,
+            "timestamp": datetime.utcnow()
+        }
+        messages_collection.insert_one(bot_msg)
 
-        # Return only the assistant's message content
-        return {"response": response.choices[0].message.content}
+        return {"response": bot_reply}
 
     except Exception as e:
         print("Error:", str(e))
