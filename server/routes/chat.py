@@ -50,3 +50,8 @@ async def chat_endpoint(request: ChatRequest):
     except Exception as e:
         print("Error:", str(e))
         return {"error": str(e)}
+    
+    @chat_router.delete("/chat")
+    async def clear_chat():
+        messages_collection.delete_many({})
+    return {"status": "cleared"}

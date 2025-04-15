@@ -7,10 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 # CORS (Cross-Origin Resource Sharing) is a security feature implemented by web browsers to restrict web pages from making requests to a different domain than the one that served the web page.
 from fastapi import FastAPI
 from routes.chat import chat_router
+from routes.history import history_router  # Import the history router
 
-app = FastAPI()
 
-app.add_middleware(
+app = FastAPI() # Create an instance of FastAPI
+
+app.add_middleware( # Add CORS middleware to the FastAPI app
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],
     allow_credentials=True,
@@ -18,8 +20,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(chat_router)
+app.include_router(chat_router) # Include the chat router
+app.include_router(history_router)  # Include the history router
 
-@app.get("/")
-def root():
-    return {"message": "FinChat AI backend is running 🚀"}
+
+@app.get("/") # Define a root endpoint
+def root(): # This is the root endpoint of the FastAPI application.
+    return {"message": "FinChat AI backend is running 🚀"} 
