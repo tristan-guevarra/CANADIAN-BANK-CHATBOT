@@ -7,22 +7,36 @@ export default function Home() {
 
   const handleSend = async () => {
     if (!input.trim()) return
-
+  
     const userMessage = { sender: 'user', content: input }
     setMessages((prev) => [...prev, userMessage])
-
-    const res = await fetch('http://localhost:8000/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: input }),
-    })
-
-    const data = await res.json()
-    console.log(data) // Log the response for debugging
-    const botMessage = { sender: 'bot', content: data.response }
-    setMessages((prev) => [...prev, botMessage])
-    setInput('')
+  
+    try {
+      const res = await fetch('http://localhost:8000/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: input }),
+      })
+  
+      const data = await res.json()
+      console.log('API response:', data)
+  
+      const botMessage = {
+        sender: 'bot',
+        content: data.response || data.error || 'No response received',
+      }
+  
+      setMessages((prev) => [...prev, botMessage])
+      setInput('')
+    } catch (err) {
+      console.error('Fetch error:', err)
+      setMessages((prev) => [...prev, {
+        sender: 'bot',
+        content: 'Error connecting to backend',
+      }])
+    }
   }
+  
 
   return (
     <main className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-6">
