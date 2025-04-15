@@ -1,15 +1,15 @@
 'use client'
-import { useEffect, useState } from 'react'
-import dayjs from 'dayjs'
+import { useEffect, useState } from 'react' // Import React hooks
+import dayjs from 'dayjs' // Import dayjs for date formatting
 
-type MessageType = {
+type MessageType = { // Define the structure of a message
   sender: string
   content: string
   timestamp?: string
 }
 
 // Group messages by date
-const groupMessagesByDate = (messages: MessageType[]) => {
+const groupMessagesByDate = (messages: MessageType[]) => { 
   const grouped: { [date: string]: MessageType[] } = {}
   messages.forEach((msg) => {
     const dateKey = dayjs(msg.timestamp).format('YYYY-MM-DD')
@@ -19,56 +19,57 @@ const groupMessagesByDate = (messages: MessageType[]) => {
   return grouped
 }
 
-export default function Home() {
-  const [input, setInput] = useState('')
+export default function Home() { // Main component
+  // State variables
+  const [input, setInput] = useState('') // Input field state
   const [messages, setMessages] = useState<MessageType[]>([])
   const sessionId = 'default' // static session ID for now
 
   // Fetch existing chat history on first render
-  useEffect(() => {
+  useEffect(() => { // Fetch chat history
     const fetchHistory = async () => {
-      try {
+      try { // Fetch chat history from the backend
         const res = await fetch('http://localhost:8000/history')
         const data = await res.json()
         setMessages(data.history)
-      } catch (err) {
+      } catch (err) { // Handle errors
         console.error('Failed to load chat history', err)
       }
     }
 
-    fetchHistory()
+    fetchHistory() // Call the function to fetch chat history
   }, [])
 
-  const handleSend = async () => {
+  const handleSend = async () => { // Send message to the backend
     if (!input.trim()) return
 
-    const now = new Date().toISOString()
+    const now = new Date().toISOString() // Get current timestamp
     const userMessage = { sender: 'user', content: input, timestamp: now }
 
-    setMessages((prev) => [...prev, userMessage])
+    setMessages((prev) => [...prev, userMessage]) // Update messages state with user message
 
     try {
-      const res = await fetch('http://localhost:8000/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch('http://localhost:8000/chat', { // Send message to the backend
+        method: 'POST', // Set method to POST
+        headers: { 'Content-Type': 'application/json' }, // Set content type
         body: JSON.stringify({
           message: input,
           session_id: sessionId,
         }),
       })
 
-      const data = await res.json()
-      console.log('API response:', data)
+      const data = await res.json() // Parse the response
+      console.log('API response:', data) // Log the API response
 
-      const botMessage = {
-        sender: 'bot',
+      const botMessage = { // Create bot message
+        sender: 'bot', // Set sender to bot
         content: data.response ?? data.error ?? 'No response received',
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString(), // Set timestamp
       }
 
-      setMessages((prev) => [...prev, botMessage])
-      setInput('')
-    } catch (err) {
+      setMessages((prev) => [...prev, botMessage]) // Update messages state with bot message
+      setInput('') // Clear input field
+    } catch (err) { // Handle errors
       console.error('Fetch error:', err)
       setMessages((prev) => [
         ...prev,
@@ -81,7 +82,14 @@ export default function Home() {
     }
   }
 
-  return (
+  return ( // Render the component
+    // JSX code
+    // This is the main layout of the page
+    // It uses Tailwind CSS for styling
+    // The main container is a flexbox that centers its content
+    // The background color is set to a dark gray
+    // The text color is set to white
+    // The container has a minimum height of the screen
     <main className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-6">
       <div className="w-full max-w-2xl bg-gray-800 rounded-xl shadow-lg p-6 space-y-4">
         <h1 className="text-3xl font-bold text-white mb-2">FinChat AI</h1>
@@ -122,7 +130,7 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="flex space-x-2">
+        <div className="flex space-x-2"> {/* Input and button container */}
           <input
             className="flex-1 p-3 rounded-md bg-gray-200 text-gray-900 placeholder-gray-500 focus:outline-none"
             placeholder="Ask about TFSAs, RRSPs, etc..."
@@ -134,7 +142,7 @@ export default function Home() {
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium"
           >
             Send
-          </button>
+          </button> {/* Send button */}
           <button
             onClick={async () => {
               await fetch('http://localhost:8000/chat', { method: 'DELETE' })
@@ -143,9 +151,11 @@ export default function Home() {
             className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md font-medium"
           >
             Clear Chat
-          </button>
+          </button> {/* Clear chat button */}
         </div>
-      </div>
-    </main>
+      </div> 
+    </main> 
   )
-}
+} 
+// End of the component
+

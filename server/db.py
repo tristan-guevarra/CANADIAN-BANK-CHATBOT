@@ -9,4 +9,4 @@ client = MongoClient(os.getenv("MONGO_URI"))
 db = client["finchat"]
 messages_collection = db["messages"]
 #print("MONGO_URI:", os.getenv("MONGO_URI"))
-print("checking connection ->")
+print("checking connection ->") # checking to see if connection hits when ran
