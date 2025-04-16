@@ -35,7 +35,7 @@ async def chat_endpoint(request: ChatRequest):
         else:
             # Call OpenAI API
             response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4o",
                 messages=[{"role": "user", "content": request.message}]
             )
             bot_reply = response.choices[0].message.content
